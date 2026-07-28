@@ -15,6 +15,9 @@ const vehicleRoutes = require("./routes/vehicleRoutes");
 const chargingStationRoutes = require("./routes/chargingStationRoutes");
 const chargerRoutes = require("./routes/chargerRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const chargingSessionRoutes = require("./routes/chargingSessionRoutes");
+
 // ===============================
 // Create Express App
 // ===============================
@@ -45,6 +48,10 @@ app.use("/charging-stations", chargingStationRoutes);
 app.use("/chargers", chargerRoutes);
 
 app.use("/bookings", bookingRoutes);
+
+app.use("/payments", paymentRoutes);
+
+app.use("/charging-sessions", chargingSessionRoutes);
 // ===============================
 // Handle Invalid Routes
 // ===============================
