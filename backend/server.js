@@ -52,6 +52,9 @@ app.use("/bookings", bookingRoutes);
 app.use("/payments", paymentRoutes);
 
 app.use("/charging-sessions", chargingSessionRoutes);
+
+//app.use("/charging-sessions", chargingSessionRoutes);
+
 // ===============================
 // Handle Invalid Routes
 // ===============================
