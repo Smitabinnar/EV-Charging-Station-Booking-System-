@@ -20,6 +20,11 @@ router.get("/:id", userController.getUserById);
 router.post("/", userController.createUser);
 
 // =======================
+// LOGIN User
+// =======================
+router.post("/login", userController.loginUser);
+
+// =======================
 // UPDATE User
 // =======================
 router.put("/:id", userController.updateUser);

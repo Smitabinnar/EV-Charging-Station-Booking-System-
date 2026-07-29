@@ -1,5 +1,6 @@
 const userModel = require("../models/userModel");
-
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 // =======================
 // Get all users
 // =======================
@@ -45,22 +46,106 @@ const getUserById = (req, res) => {
 };
 
 // =======================
-// Create user
+// Create user (Register)
 // =======================
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
 
-    const userData = req.body;
+    try {
 
-    userModel.createUser(userData, (err, result) => {
+        const userData = req.body;
+
+        // Hash Password
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+        // Replace plain password with hashed password
+        userData.password = hashedPassword;
+
+        userModel.createUser(userData, (err, result) => {
+
+            if (err) {
+                console.log("Database Error:", err);
+                return res.status(500).json(err);
+            }
+
+            res.status(201).json({
+                message: "User registered successfully",
+                userId: result.insertId
+            });
+
+        });
+
+    }
+    catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Error while creating user"
+        });
+
+    }
+
+};
+
+// =======================
+// Login User
+// =======================
+const loginUser = (req, res) => {
+
+    const { email, password } = req.body;
+
+    userModel.getUserByEmail(email, async (err, results) => {
 
         if (err) {
-            console.log("Database Error:", err);
+            console.log(err);
             return res.status(500).json(err);
         }
 
-        res.status(201).json({
-            message: "User created successfully",
-            userId: result.insertId
+        if (results.length === 0) {
+            return res.status(401).json({
+                message: "Invalid Email or Password"
+            });
+        }
+
+        const user = results[0];
+
+        // Compare Password
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                message: "Invalid Email or Password"
+            });
+        }
+
+        // Generate JWT Token
+        const token = jwt.sign(
+
+            {
+                id: user.user_id,
+                email: user.email
+            },
+
+            process.env.JWT_SECRET,
+
+            {
+                expiresIn: "1h"
+            }
+
+        );
+
+        res.status(200).json({
+
+            message: "Login Successful",
+
+            token: token,
+
+            user: {
+                user_id: user.user_id,
+                full_name: user.full_name,
+                email: user.email
+            }
+
         });
 
     });
@@ -131,6 +216,7 @@ module.exports = {
     getUsers,
     getUserById,
     createUser,
+    loginUser,
     updateUser,
     deleteUser
 };

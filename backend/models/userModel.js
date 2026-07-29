@@ -23,6 +23,17 @@ const getUserById = (id, callback) => {
 };
 
 // =======================
+// Get user by Email
+// =======================
+const getUserByEmail = (email, callback) => {
+
+    const sql = "SELECT * FROM Users WHERE email = ?";
+
+    db.query(sql, [email], callback);
+
+};
+
+// =======================
 // Create new user
 // =======================
 const createUser = (userData, callback) => {
@@ -92,6 +103,7 @@ const deleteUser = (id, callback) => {
 module.exports = {
     getAllUsers,
     getUserById,
+    getUserByEmail,
     createUser,
     updateUser,
     deleteUser
