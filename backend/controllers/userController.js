@@ -94,12 +94,17 @@ const loginUser = (req, res) => {
 
     const { email, password } = req.body;
 
+    console.log("Email entered:", email);
+    console.log("Password entered:", password);
+
     userModel.getUserByEmail(email, async (err, results) => {
 
         if (err) {
             console.log(err);
             return res.status(500).json(err);
         }
+
+        console.log("Database Result:", results);
 
         if (results.length === 0) {
             return res.status(401).json({
@@ -109,8 +114,11 @@ const loginUser = (req, res) => {
 
         const user = results[0];
 
-        // Compare Password
+        console.log("Stored Hash:", user.password);
+
         const isMatch = await bcrypt.compare(password, user.password);
+
+        console.log("Password Match:", isMatch);
 
         if (!isMatch) {
             return res.status(401).json({
@@ -118,40 +126,26 @@ const loginUser = (req, res) => {
             });
         }
 
-        // Generate JWT Token
         const token = jwt.sign(
-
             {
                 id: user.user_id,
                 email: user.email
             },
-
             process.env.JWT_SECRET,
-
             {
                 expiresIn: "1h"
             }
-
         );
 
-        res.status(200).json({
-
+        res.json({
             message: "Login Successful",
-
-            token: token,
-
-            user: {
-                user_id: user.user_id,
-                full_name: user.full_name,
-                email: user.email
-            }
-
+            token,
+            user
         });
 
     });
 
 };
-
 // =======================
 // Update user
 // =======================
