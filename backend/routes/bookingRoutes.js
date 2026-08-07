@@ -10,6 +10,11 @@ const verifyToken = require("../middleware/verifyToken");
 router.get("/", bookingController.getBookings);
 
 // =======================
+// GET Logged-in User Bookings
+// =======================
+router.get("/my", verifyToken, bookingController.getMyBookings);
+
+// =======================
 // GET Booking By ID
 // =======================
 router.get("/:id", bookingController.getBookingById);

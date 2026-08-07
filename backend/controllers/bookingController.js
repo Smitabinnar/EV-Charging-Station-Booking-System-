@@ -19,6 +19,26 @@ const getBookings = (req, res) => {
 };
 
 // =======================
+// Get Logged-in User Bookings
+// =======================
+const getMyBookings = (req, res) => {
+
+    const userId = req.user.id;
+
+    bookingModel.getMyBookings(userId, (err, results) => {
+
+        if (err) {
+            console.log("Database Error:", err);
+            return res.status(500).json(err);
+        }
+
+        res.status(200).json(results);
+
+    });
+
+};
+
+// =======================
 // Get booking by ID
 // =======================
 const getBookingById = (req, res) => {
@@ -51,10 +71,26 @@ const createBooking = (req, res) => {
 
     const bookingData = req.body;
 
+    // Get logged-in user's ID from JWT
+    bookingData.user_id = req.user.id;
+
+    bookingModel.checkBookingConflict(bookingData, (err, results) => {
+
+    if (err) {
+        console.log(err);
+        return res.status(500).json(err);
+    }
+
+    if (results.length > 0) {
+        return res.status(400).json({
+            message: "This charger is already booked for the selected time."
+        });
+    }
+
     bookingModel.createBooking(bookingData, (err, result) => {
 
         if (err) {
-            console.log("Database Error:", err);
+            console.log(err);
             return res.status(500).json(err);
         }
 
@@ -65,6 +101,7 @@ const createBooking = (req, res) => {
 
     });
 
+});
 };
 
 // =======================
@@ -126,6 +163,7 @@ const deleteBooking = (req, res) => {
 
 module.exports = {
     getBookings,
+    getMyBookings,
     getBookingById,
     createBooking,
     updateBooking,
