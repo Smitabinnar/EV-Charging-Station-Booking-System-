@@ -1,96 +1,54 @@
 const bookingModel = require("../models/bookingModel");
 
 // =======================
-// Get all bookings
+// Get All Bookings
 // =======================
-const getBookings = (req, res) => {
+exports.getBookings = (req, res) => {
 
-    bookingModel.getAllBookings((err, results) => {
+    bookingModel.getAllBookings((err, result) => {
 
         if (err) {
             console.log("Database Error:", err);
             return res.status(500).json(err);
         }
 
-        res.status(200).json(results);
-
+        res.status(200).json(result);
     });
-
 };
 
-// =======================
-// Get Logged-in User Bookings
-// =======================
-const getMyBookings = (req, res) => {
 
-    const userId = req.user.id;
+// =======================
+// Get Booking By ID
+// =======================
+exports.getBookingById = (req, res) => {
 
-    bookingModel.getMyBookings(userId, (err, results) => {
+    bookingModel.getBookingById(req.params.id, (err, result) => {
 
         if (err) {
             console.log("Database Error:", err);
             return res.status(500).json(err);
         }
 
-        res.status(200).json(results);
-
-    });
-
-};
-
-// =======================
-// Get booking by ID
-// =======================
-const getBookingById = (req, res) => {
-
-    const id = req.params.id;
-
-    bookingModel.getBookingById(id, (err, results) => {
-
-        if (err) {
-            console.log("Database Error:", err);
-            return res.status(500).json(err);
-        }
-
-        if (results.length === 0) {
+        if (result.length === 0) {
             return res.status(404).json({
                 message: "Booking not found"
             });
         }
 
-        res.status(200).json(results[0]);
-
+        res.status(200).json(result[0]);
     });
-
 };
 
+
 // =======================
-// Create booking
+// Create Booking
 // =======================
-const createBooking = (req, res) => {
+exports.createBooking = (req, res) => {
 
-    const bookingData = req.body;
-
-    // Get logged-in user's ID from JWT
-    bookingData.user_id = req.user.id;
-
-    bookingModel.checkBookingConflict(bookingData, (err, results) => {
-
-    if (err) {
-        console.log(err);
-        return res.status(500).json(err);
-    }
-
-    if (results.length > 0) {
-        return res.status(400).json({
-            message: "This charger is already booked for the selected time."
-        });
-    }
-
-    bookingModel.createBooking(bookingData, (err, result) => {
+    bookingModel.createBooking(req.body, (err, result) => {
 
         if (err) {
-            console.log(err);
+            console.log("Database Error:", err);
             return res.status(500).json(err);
         }
 
@@ -98,49 +56,45 @@ const createBooking = (req, res) => {
             message: "Booking created successfully",
             bookingId: result.insertId
         });
-
     });
-
-});
 };
 
+
 // =======================
-// Update booking
+// Update Booking
 // =======================
-const updateBooking = (req, res) => {
+exports.updateBooking = (req, res) => {
 
-    const id = req.params.id;
-    const bookingData = req.body;
+    bookingModel.updateBooking(
+        req.params.id,
+        req.body,
+        (err, result) => {
 
-    bookingModel.updateBooking(id, bookingData, (err, result) => {
+            if (err) {
+                console.log("Database Error:", err);
+                return res.status(500).json(err);
+            }
 
-        if (err) {
-            console.log("Database Error:", err);
-            return res.status(500).json(err);
-        }
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    message: "Booking not found"
+                });
+            }
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                message: "Booking not found"
+            res.status(200).json({
+                message: "Booking updated successfully"
             });
         }
-
-        res.status(200).json({
-            message: "Booking updated successfully"
-        });
-
-    });
-
+    );
 };
 
-// =======================
-// Delete booking
-// =======================
-const deleteBooking = (req, res) => {
 
-    const id = req.params.id;
+// =======================
+// Delete Booking
+// =======================
+exports.deleteBooking = (req, res) => {
 
-    bookingModel.deleteBooking(id, (err, result) => {
+    bookingModel.deleteBooking(req.params.id, (err, result) => {
 
         if (err) {
             console.log("Database Error:", err);
@@ -156,16 +110,5 @@ const deleteBooking = (req, res) => {
         res.status(200).json({
             message: "Booking deleted successfully"
         });
-
     });
-
-};
-
-module.exports = {
-    getBookings,
-    getMyBookings,
-    getBookingById,
-    createBooking,
-    updateBooking,
-    deleteBooking
 };

@@ -40,20 +40,12 @@ app.get("/", (req, res) => {
 // API Routes
 // ===============================
 app.use("/users", userRoutes);
-
 app.use("/vehicles", vehicleRoutes);
-
 app.use("/charging-stations", chargingStationRoutes);
-
 app.use("/chargers", chargerRoutes);
-
 app.use("/bookings", bookingRoutes);
-
 app.use("/payments", paymentRoutes);
-
 app.use("/charging-sessions", chargingSessionRoutes);
-
-//app.use("/charging-sessions", chargingSessionRoutes);
 
 // ===============================
 // Handle Invalid Routes

@@ -1,37 +1,24 @@
 const express = require("express");
+
 const router = express.Router();
 
 const bookingController = require("../controllers/bookingController");
-const verifyToken = require("../middleware/verifyToken");
 
-// =======================
-// GET All Bookings
-// =======================
+
+// GET all bookings
 router.get("/", bookingController.getBookings);
 
-// =======================
-// GET Logged-in User Bookings
-// =======================
-router.get("/my", verifyToken, bookingController.getMyBookings);
-
-// =======================
-// GET Booking By ID
-// =======================
+// GET booking by ID
 router.get("/:id", bookingController.getBookingById);
 
-// =======================
-// CREATE Booking
-// =======================
-router.post("/", verifyToken, bookingController.createBooking);
+// POST create booking
+router.post("/", bookingController.createBooking);
 
-// =======================
-// UPDATE Booking
-// =======================
-router.put("/:id", verifyToken, bookingController.updateBooking);
+// PUT update booking
+router.put("/:id", bookingController.updateBooking);
 
-// =======================
-// DELETE Booking
-// =======================
-router.delete("/:id", verifyToken, bookingController.deleteBooking);
+// DELETE booking
+router.delete("/:id", bookingController.deleteBooking);
+
 
 module.exports = router;

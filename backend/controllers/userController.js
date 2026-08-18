@@ -90,7 +90,7 @@ const createUser = async (req, res) => {
 // =======================
 // Login User
 // =======================
-const loginUser = (req, res) => {
+const loginUser = async(req, res) => {
 
     const { email, password } = req.body;
 
@@ -98,6 +98,7 @@ const loginUser = (req, res) => {
     console.log("Password entered:", password);
 
     userModel.getUserByEmail(email, async (err, results) => {
+        console.log("Database Result:", results);
 
         if (err) {
             console.log(err);

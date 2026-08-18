@@ -1,74 +1,39 @@
 const db = require("../config/db");
 
 // =======================
-// Get all bookings with details
+// Get All Bookings
 // =======================
-const getAllBookings = (callback) => {
+exports.getAllBookings = (callback) => {
 
     const sql = `
-        SELECT
-            b.booking_id,
-
-            u.user_id,
-            u.full_name AS customer_name,
-            u.email,
-
-            v.vehicle_id,
-            v.vehicle_number,
-            v.vehicle_name,
-            v.brand,
-
-            cs.station_id,
-            cs.station_name,
-            cs.city,
-
-            c.charger_id,
-            c.charger_number,
-            c.charger_type,
-            c.connector_type,
-            c.power_output,
-
-            b.booking_date,
-            b.start_time,
-            b.end_time,
-            b.booking_status,
-            b.created_at
-
-        FROM Bookings b
-
-        JOIN Users u
-            ON b.user_id = u.user_id
-
-        JOIN Vehicles v
-            ON b.vehicle_id = v.vehicle_id
-
-        JOIN ChargingStations cs
-            ON b.station_id = cs.station_id
-
-        JOIN Chargers c
-            ON b.charger_id = c.charger_id
-
-        ORDER BY b.booking_id DESC
+        SELECT *
+        FROM Bookings
+        ORDER BY booking_id DESC
     `;
 
     db.query(sql, callback);
 };
 
-// =======================
-// Get booking by ID
-// =======================
-const getBookingById = (id, callback) => {
 
-    const sql = "SELECT * FROM Bookings WHERE booking_id = ?";
+// =======================
+// Get Booking By ID
+// =======================
+exports.getBookingById = (id, callback) => {
+
+    const sql = `
+        SELECT *
+        FROM Bookings
+        WHERE booking_id = ?
+    `;
 
     db.query(sql, [id], callback);
-
 };
 
+
 // =======================
-// Create booking
+// Create Booking
 // =======================
-const createBooking = (bookingData, callback) => {
+exports.createBooking = (booking, callback) => {
 
     const sql = `
         INSERT INTO Bookings
@@ -88,23 +53,24 @@ const createBooking = (bookingData, callback) => {
     db.query(
         sql,
         [
-            bookingData.user_id,
-            bookingData.vehicle_id,
-            bookingData.station_id,
-            bookingData.charger_id,
-            bookingData.booking_date,
-            bookingData.start_time,
-            bookingData.end_time,
-            bookingData.booking_status
+            booking.user_id,
+            booking.vehicle_id,
+            booking.station_id,
+            booking.charger_id,
+            booking.booking_date,
+            booking.start_time,
+            booking.end_time,
+            booking.booking_status || "Pending"
         ],
         callback
     );
-
 };
+
+
 // =======================
-// Update booking
+// Update Booking
 // =======================
-const updateBooking = (id, bookingData, callback) => {
+exports.updateBooking = (id, booking, callback) => {
 
     const sql = `
         UPDATE Bookings
@@ -123,116 +89,30 @@ const updateBooking = (id, bookingData, callback) => {
     db.query(
         sql,
         [
-            bookingData.user_id,
-            bookingData.vehicle_id,
-            bookingData.station_id,
-            bookingData.charger_id,
-            bookingData.booking_date,
-            bookingData.start_time,
-            bookingData.end_time,
-            bookingData.booking_status,
+            booking.user_id,
+            booking.vehicle_id,
+            booking.station_id,
+            booking.charger_id,
+            booking.booking_date,
+            booking.start_time,
+            booking.end_time,
+            booking.booking_status,
             id
         ],
         callback
     );
-
 };
 
-// =======================
-// Delete booking
-// =======================
-const deleteBooking = (id, callback) => {
 
-    const sql = "DELETE FROM Bookings WHERE booking_id = ?";
+// =======================
+// Delete Booking
+// =======================
+exports.deleteBooking = (id, callback) => {
+
+    const sql = `
+        DELETE FROM Bookings
+        WHERE booking_id = ?
+    `;
 
     db.query(sql, [id], callback);
-
-};
-
-// =======================
-// Check Charger Availability
-// =======================
-const checkBookingConflict = (bookingData, callback) => {
-
-    const sql = `
-        SELECT *
-        FROM Bookings
-        WHERE charger_id = ?
-        AND booking_date = ?
-        AND booking_status != 'Cancelled'
-        AND (
-            start_time < ?
-            AND end_time > ?
-        )
-    `;
-
-    db.query(
-        sql,
-        [
-            bookingData.charger_id,
-            bookingData.booking_date,
-            bookingData.end_time,
-            bookingData.start_time
-        ],
-        callback
-    );
-
-};
-// =======================
-// Get My Bookings
-// =======================
-const getMyBookings = (userId, callback) => {
-
-    const sql = `
-        SELECT
-            b.booking_id,
-
-            u.full_name AS customer_name,
-
-            v.vehicle_number,
-            v.vehicle_name,
-
-            cs.station_name,
-
-            c.charger_number,
-
-            b.booking_date,
-            b.start_time,
-            b.end_time,
-            b.booking_status
-
-        FROM Bookings b
-
-        JOIN Users u
-            ON b.user_id = u.user_id
-
-        JOIN Vehicles v
-            ON b.vehicle_id = v.vehicle_id
-
-        JOIN ChargingStations cs
-            ON b.station_id = cs.station_id
-
-        JOIN Chargers c
-            ON b.charger_id = c.charger_id
-
-        WHERE b.user_id = ?
-
-        ORDER BY b.booking_date DESC;
-    `;
-
-    db.query(sql, [userId], callback);
-
-};
-
-// =======================
-// Export all functions
-// =======================
-module.exports = {
-    getAllBookings,
-    getBookingById,
-    createBooking,
-    updateBooking,
-    deleteBooking,
-    checkBookingConflict,
-    getMyBookings
 };

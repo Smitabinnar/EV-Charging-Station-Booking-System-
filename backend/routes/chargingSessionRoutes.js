@@ -1,21 +1,22 @@
 const express = require("express");
+
 const router = express.Router();
 
 const chargingSessionController = require("../controllers/chargingSessionController");
 
-// GET All Sessions
-router.get("/", chargingSessionController.getAllSessions);
+// GET all charging sessions
+router.get("/", chargingSessionController.getChargingSessions);
 
-// GET Session By ID
-router.get("/:id", chargingSessionController.getSessionById);
+// GET charging session by ID
+router.get("/:id", chargingSessionController.getChargingSessionById);
 
-// POST Create Session
-router.post("/", chargingSessionController.createSession);
+// POST create charging session
+router.post("/", chargingSessionController.createChargingSession);
 
-// PUT Update Session
-router.put("/:id", chargingSessionController.updateSession);
+// PUT update charging session
+router.put("/:id", chargingSessionController.updateChargingSession);
 
-// DELETE Session
-router.delete("/:id", chargingSessionController.deleteSession);
+// DELETE charging session
+router.delete("/:id", chargingSessionController.deleteChargingSession);
 
 module.exports = router;

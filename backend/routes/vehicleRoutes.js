@@ -4,29 +4,19 @@ const router = express.Router();
 
 const vehicleController = require("../controllers/vehicleController");
 
-// =======================
-// GET All Vehicles
-// =======================
-router.get("/", vehicleController.getVehicles);
+// GET all vehicles
+router.get("/", vehicleController.getAllVehicles);
 
-// =======================
-// GET Vehicle By ID
-// =======================
+// GET vehicle by ID
 router.get("/:id", vehicleController.getVehicleById);
 
-// =======================
-// CREATE Vehicle
-// =======================
+// POST create vehicle
 router.post("/", vehicleController.createVehicle);
 
-// =======================
-// UPDATE Vehicle
-// =======================
+// PUT update vehicle
 router.put("/:id", vehicleController.updateVehicle);
 
-// =======================
-// DELETE Vehicle
-// =======================
+// DELETE vehicle
 router.delete("/:id", vehicleController.deleteVehicle);
 
 module.exports = router;

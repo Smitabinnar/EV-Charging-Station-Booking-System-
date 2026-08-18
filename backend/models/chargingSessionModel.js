@@ -1,21 +1,38 @@
 const db = require("../config/db");
 
-// Get All Sessions
-exports.getAllSessions = (callback) => {
-    db.query("SELECT * FROM ChargingSessions", callback);
+// =======================
+// Get All Charging Sessions
+// =======================
+const getAllChargingSessions = (callback) => {
+
+    const sql = `
+        SELECT *
+        FROM ChargingSessions
+    `;
+
+    db.query(sql, callback);
 };
 
-// Get Session By ID
-exports.getSessionById = (id, callback) => {
-    db.query(
-        "SELECT * FROM ChargingSessions WHERE session_id = ?",
-        [id],
-        callback
-    );
+
+// =======================
+// Get Charging Session By ID
+// =======================
+const getChargingSessionById = (id, callback) => {
+
+    const sql = `
+        SELECT *
+        FROM ChargingSessions
+        WHERE session_id = ?
+    `;
+
+    db.query(sql, [id], callback);
 };
 
-// Create Session
-exports.createSession = (data, callback) => {
+
+// =======================
+// Create Charging Session
+// =======================
+const createChargingSession = (session, callback) => {
 
     const sql = `
         INSERT INTO ChargingSessions
@@ -30,47 +47,75 @@ exports.createSession = (data, callback) => {
         VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(sql, [
-        data.booking_id,
-        data.session_start,
-        data.session_end,
-        data.energy_consumed,
-        data.total_cost,
-        data.session_status
-    ], callback);
+    db.query(
+        sql,
+        [
+            session.booking_id,
+            session.session_start,
+            session.session_end,
+            session.energy_consumed,
+            session.total_cost,
+            session.session_status
+        ],
+        callback
+    );
 };
 
-// Update Session
-exports.updateSession = (id, data, callback) => {
+
+// =======================
+// Update Charging Session
+// =======================
+const updateChargingSession = (id, session, callback) => {
 
     const sql = `
         UPDATE ChargingSessions
         SET
-            booking_id=?,
-            session_start=?,
-            session_end=?,
-            energy_consumed=?,
-            total_cost=?,
-            session_status=?
-        WHERE session_id=?
+            booking_id = ?,
+            session_start = ?,
+            session_end = ?,
+            energy_consumed = ?,
+            total_cost = ?,
+            session_status = ?
+        WHERE session_id = ?
     `;
 
-    db.query(sql, [
-        data.booking_id,
-        data.session_start,
-        data.session_end,
-        data.energy_consumed,
-        data.total_cost,
-        data.session_status,
-        id
-    ], callback);
-};
-
-// Delete Session
-exports.deleteSession = (id, callback) => {
     db.query(
-        "DELETE FROM ChargingSessions WHERE session_id=?",
-        [id],
+        sql,
+        [
+            session.booking_id,
+            session.session_start,
+            session.session_end,
+            session.energy_consumed,
+            session.total_cost,
+            session.session_status,
+            id
+        ],
         callback
     );
+};
+
+
+// =======================
+// Delete Charging Session
+// =======================
+const deleteChargingSession = (id, callback) => {
+
+    const sql = `
+        DELETE FROM ChargingSessions
+        WHERE session_id = ?
+    `;
+
+    db.query(sql, [id], callback);
+};
+
+
+// =======================
+// Export Functions
+// =======================
+module.exports = {
+    getAllChargingSessions,
+    getChargingSessionById,
+    createChargingSession,
+    updateChargingSession,
+    deleteChargingSession
 };

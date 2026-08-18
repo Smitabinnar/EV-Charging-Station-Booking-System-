@@ -1,11 +1,9 @@
 const vehicleModel = require("../models/vehicleModel");
 
-console.log(vehicleModel);
-
 // =======================
 // Get all vehicles
 // =======================
-const getVehicles = (req, res) => {
+const getAllVehicles = (req, res) => {
 
     vehicleModel.getAllVehicles((err, results) => {
 
@@ -126,8 +124,11 @@ const deleteVehicle = (req, res) => {
 
 };
 
+// =======================
+// Export controllers
+// =======================
 module.exports = {
-    getVehicles,
+    getAllVehicles,
     getVehicleById,
     createVehicle,
     updateVehicle,

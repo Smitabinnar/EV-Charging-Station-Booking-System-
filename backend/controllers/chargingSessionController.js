@@ -1,48 +1,68 @@
 const chargingSessionModel = require("../models/chargingSessionModel");
 
-// Get All Sessions
-exports.getAllSessions = (req, res) => {
+// =======================
+// Get All Charging Sessions
+// =======================
+exports.getChargingSessions = (req, res) => {
 
-    chargingSessionModel.getAllSessions((err, results) => {
+    chargingSessionModel.getAllChargingSessions((err, result) => {
 
         if (err) {
+            console.log("Database Error:", err);
             return res.status(500).json(err);
         }
 
-        res.json(results);
+        res.status(200).json(result);
+
     });
 
 };
 
-// Get Session By ID
-exports.getSessionById = (req, res) => {
 
-    chargingSessionModel.getSessionById(
-        req.params.id,
-        (err, results) => {
+// =======================
+// Get Charging Session By ID
+// =======================
+exports.getChargingSessionById = (req, res) => {
 
-            if (err) {
-                return res.status(500).json(err);
-            }
+    const id = req.params.id;
 
-            res.json(results);
+    chargingSessionModel.getChargingSessionById(id, (err, result) => {
+
+        if (err) {
+            console.log("Database Error:", err);
+            return res.status(500).json(err);
         }
-    );
+
+        if (result.length === 0) {
+            return res.status(404).json({
+                message: "Charging Session not found"
+            });
+        }
+
+        res.status(200).json(result[0]);
+
+    });
 
 };
 
-// Create Session
-exports.createSession = (req, res) => {
 
-    chargingSessionModel.createSession(
-        req.body,
+// =======================
+// Create Charging Session
+// =======================
+exports.createChargingSession = (req, res) => {
+
+    const sessionData = req.body;
+
+    chargingSessionModel.createChargingSession(
+        sessionData,
         (err, result) => {
 
             if (err) {
+                console.log("Database Error:", err);
                 return res.status(500).json(err);
             }
 
-            res.json({
+            res.status(201).json({
                 message: "Charging Session created successfully",
                 sessionId: result.insertId
             });
@@ -52,19 +72,32 @@ exports.createSession = (req, res) => {
 
 };
 
-// Update Session
-exports.updateSession = (req, res) => {
 
-    chargingSessionModel.updateSession(
-        req.params.id,
-        req.body,
-        (err) => {
+// =======================
+// Update Charging Session
+// =======================
+exports.updateChargingSession = (req, res) => {
+
+    const id = req.params.id;
+    const sessionData = req.body;
+
+    chargingSessionModel.updateChargingSession(
+        id,
+        sessionData,
+        (err, result) => {
 
             if (err) {
+                console.log("Database Error:", err);
                 return res.status(500).json(err);
             }
 
-            res.json({
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    message: "Charging Session not found"
+                });
+            }
+
+            res.status(200).json({
                 message: "Charging Session updated successfully"
             });
 
@@ -73,18 +106,30 @@ exports.updateSession = (req, res) => {
 
 };
 
-// Delete Session
-exports.deleteSession = (req, res) => {
 
-    chargingSessionModel.deleteSession(
-        req.params.id,
-        (err) => {
+// =======================
+// Delete Charging Session
+// =======================
+exports.deleteChargingSession = (req, res) => {
+
+    const id = req.params.id;
+
+    chargingSessionModel.deleteChargingSession(
+        id,
+        (err, result) => {
 
             if (err) {
+                console.log("Database Error:", err);
                 return res.status(500).json(err);
             }
 
-            res.json({
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    message: "Charging Session not found"
+                });
+            }
+
+            res.status(200).json({
                 message: "Charging Session deleted successfully"
             });
 

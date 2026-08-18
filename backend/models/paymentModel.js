@@ -1,10 +1,22 @@
 const db = require("../config/db");
 
+// =======================
+// Get All Payments
+// =======================
 const getAllPayments = (callback) => {
-    db.query("SELECT * FROM Payments", callback);
+
+    db.query(
+        "SELECT * FROM Payments",
+        callback
+    );
+
 };
 
+// =======================
+// Create Payment
+// =======================
 const createPayment = (payment, callback) => {
+
     const sql = `
         INSERT INTO Payments
         (
@@ -26,8 +38,12 @@ const createPayment = (payment, callback) => {
         ],
         callback
     );
+
 };
 
+// =======================
+// Export
+// =======================
 module.exports = {
     getAllPayments,
     createPayment

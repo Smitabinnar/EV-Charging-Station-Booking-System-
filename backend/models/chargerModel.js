@@ -14,6 +14,7 @@ exports.getChargerById = (id, callback) => {
     );
 };
 
+
 // Create Charger
 exports.createCharger = (charger, callback) => {
 
@@ -74,4 +75,17 @@ exports.deleteCharger = (id, callback) => {
         [id],
         callback
     );
+};
+
+// Update Charger Status
+exports.updateChargerStatus = (chargerId, status, callback) => {
+
+    const sql = `
+        UPDATE Chargers
+        SET status = ?
+        WHERE charger_id = ?
+    `;
+
+    db.query(sql, [status, chargerId], callback);
+
 };
